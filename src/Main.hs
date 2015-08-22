@@ -50,24 +50,24 @@ call f s t = case lookup f t of
   Just function -> apply function s
   Nothing -> Left $ "Undefined function: " ++ f
 
-loop :: [String] -> Stack -> Table -> Either Error Stack
-loop [] s _ = Right s
-loop (x:xs) stack table = case readMaybe x :: Maybe Int of
-  -- x == n, is a number, so add it to the stack
-  -- and go to the next element
-  Just n -> loop xs (push stack n) table
-  -- x is a string, so see if its a known function
-  -- call it, and go on 
-  Nothing -> do (Stack t) <- call x stack table
-                loop xs (Stack t) table
-
 main :: IO ()
-main = do
-  input <- getContents
-  case loop (words input) (Stack []) table of
-    Right (Stack s) -> print s
-    Left err -> print err
+main = do input <- getContents
+          case loop (words input) (Stack []) of
+            Right (Stack s) -> print s
+            Left err -> print err
+  where
+    loop [] s = Right s
+    loop (x:xs) stack = case readMaybe x :: Maybe Int of
+      -- x == n, is a number, so add it to the stack
+      -- and go to the next element
+      Just n -> loop xs (push stack n)
+      -- x is a string, so see if its a known function
+      -- call it, and go on 
+      Nothing -> do (Stack t) <- call x stack table
+                    loop xs (Stack t)
+        
 
+  
          
 
   
