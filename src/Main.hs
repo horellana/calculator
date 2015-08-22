@@ -23,10 +23,10 @@ table = [("+", Function 2 sum),
          ("-", Function 2 $ foldr (-) 0),
          ("*", Function 2 product),
          ("/", Function 2 $ foldr (/) 1),
-         ("**", Function 2 pow)]
-
-pow :: [Double] -> Double
-pow [a,b] = product $ replicate (ceiling a) b
+         ("**", Function 2 pow),
+         ("sqrt", Function 1 $ sqrt . head)]
+  where
+    pow [a,b] = product $ replicate (ceiling a) b
                     
 apply :: Function -> Stack -> Either Error Stack
 apply (Function argc code) = f code [] 0
