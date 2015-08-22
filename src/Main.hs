@@ -4,31 +4,31 @@ import Text.Read
 import Data.Either
 
 data Function = Function { name :: String,
-                           args :: Int,
+                           argc :: Int,
                            code :: [Int] -> Int }
 
 instance Show Function where
-  show (Function name args _) = "<Function " ++ name ++ " : " ++ show args ++ ">"
+  show (Function name argc _) = "<Function " ++ name ++ " : " ++ show argc ++ ">"
 
 data Stack = Stack [Int] deriving (Show)
 
 apply :: Function -> Stack -> Stack
-apply (Function _ args code) (Stack stack) = Stack $ (code $ take args stack) : (drop args stack)
+apply (Function _ argc code) (Stack stack) = Stack $ (code $ take argc stack) : (drop argc stack)
 
 type Table = [(String, Function)]
 
 table :: Table
 table = [("+", Function { name = "+",
-                          args = 2,
+                          argc = 2,
                           code = sum }),
          ("-", Function { name = "-",
-                          args = 2,
+                          argc = 2,
                           code = foldr (-) 0}),
          ("*", Function { name = "*",
-                          args = 2,
+                          argc = 2,
                           code = product }),
          ("/", Function { name = "/",
-                          args = 2,
+                          argc = 2,
                           code = foldr div 1 })]
 
 eval :: String -> Stack -> Table -> Either String Stack
