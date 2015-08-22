@@ -54,7 +54,7 @@ main = do input <- getContents
             Right (Stack s) -> mapM_ print s
             Left err -> putStrLn err
   where
-    loop [] s = Right s
+    loop [] stack = Right stack
     loop (x:xs) stack = case readMaybe x of
       Just n -> loop xs (push stack n)
       Nothing -> call x stack table >>= loop xs
