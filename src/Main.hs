@@ -1,6 +1,6 @@
 module Main where
 
-import Text.Read
+import Text.Read (readMaybe)
 
 data Function = Function { name :: String,
                            argc :: Int,
@@ -18,7 +18,7 @@ push :: Stack -> Int -> Stack
 push (Stack s) n = Stack (n : s)
 
 pop :: Stack -> Either Error (Stack, Int)
-pop (Stack []) = Left "stack underflow"
+pop (Stack []) = Left "Stack underflow"
 pop (Stack (x:xs)) = Right (Stack xs, x)
 
 table :: Table
@@ -46,7 +46,6 @@ apply (Function _ argc code) stack = f code [] 0 stack
       | cont == argc = Right $ push stack' (fn args) 
       | otherwise = do (stack'', a) <- pop stack'
                        f fn (a : args) (cont + 1) stack''
-
                   
 call :: String -> Stack -> Table -> Either Error Stack
 call f s t = case lookup f t of
@@ -56,18 +55,13 @@ call f s t = case lookup f t of
 main :: IO ()
 main = do input <- getContents
           case loop (words input) (Stack []) of
-            Right (Stack s) -> print s
-            Left err -> print err
+            Right (Stack s) -> mapM_ print s
+            Left err -> putStrLn err
   where
     loop [] s = Right s
-    loop (x:xs) stack = case readMaybe x :: Maybe Int of
-      -- x == n, is a number, so add it to the stack
-      -- and go to the next element
+    loop (x:xs) stack = case readMaybe x of
       Just n -> loop xs (push stack n)
-      -- x is a string, so see if its a known function
-      -- call it, and go on 
-      Nothing -> do (Stack t) <- call x stack table
-                    loop xs (Stack t)
+      Nothing -> call x stack table >>= loop xs
         
 
   
