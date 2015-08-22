@@ -28,5 +28,10 @@ table = [("+", Function { name = "+",
                           args = 2,
                           code = foldr div 1 })]
 
+eval :: String -> Stack -> Stack
+eval f stack = case lookup f table of
+  Just function -> apply function stack
+  Nothing -> error $ "Undefined function: " ++ f
+
 main :: IO ()
 main = undefined
