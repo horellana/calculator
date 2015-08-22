@@ -2,8 +2,8 @@ module Main where
 
 import Text.Read (readMaybe)
 
-data Function = Function { argc :: Int,
-                           code :: [Double] -> Double }
+data Function = Function { fArgc :: Int,
+                           fCode :: [Double] -> Double }
                            
 data Stack = Stack [Double] deriving (Show)
 
@@ -19,22 +19,17 @@ pop (Stack []) = Left "Stack underflow"
 pop (Stack (x:xs)) = Right (Stack xs, x)
 
 table :: Table
-table = [("+", Function { argc = 2,
-                          code = sum }),
-         ("-", Function { argc = 2,
-                          code = foldr (-) 0}),
-         ("*", Function { argc = 2,
-                          code = product }),
-         ("/", Function { argc = 2,
-                          code = foldr (/) 1 }),
-         ("**", Function { argc = 2,
-                           code = pow })]
+table = [("+", Function 2 sum),
+         ("-", Function 2 $ foldr (-) 0),
+         ("*", Function 2 product),
+         ("/", Function 2 $ foldr (/) 1),
+         ("**", Function 2 pow)]
 
 pow :: [Double] -> Double
 pow [a,b] = product $ replicate (ceiling a) b
                     
 apply :: Function -> Stack -> Either Error Stack
-apply (Function argc code) stack = f code [] 0 stack
+apply (Function argc code) = f code [] 0
   where
     f fn args cont stack'
       | cont == argc = Right $ push stack' (fn args) 
