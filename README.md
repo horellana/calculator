@@ -6,7 +6,7 @@ A RPN calculator written in haskell
 Building
 =========
 
-You can build this program using stack https://github.com/juiko/calculator
+You can build this program using stack (https://github.com/commercialhaskell/stack/)
 or cabal.
 
 ```
