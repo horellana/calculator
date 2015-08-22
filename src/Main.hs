@@ -40,7 +40,10 @@ push (Stack s) n = Stack (n : s)
 -- (en este caso retornaria Right a, 'a' representa el resultado),
 -- o si ocurrio un error (Left error)
 pop :: Stack -> Either Error (Stack, Int)
+-- Si pop recibe un stack vacio entonces es un error
 pop (Stack []) = Left "Stack underflow"
+-- Si no hacemos pattern matching para sacar el primer elemento de la lista 'x'
+-- retornando una tupla con el stack con el resto de la lista 'xs' y el elemento 'x' 
 pop (Stack (x:xs)) = Right (Stack xs, x)
 
 table :: Table
