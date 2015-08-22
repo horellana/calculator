@@ -27,9 +27,13 @@ table = [("+", Function { argc = 2,
          ("/", Function { argc = 2,
                           code = foldr div 1 }),
          ("%", Function { argc = 2,
-                          code = foldr mod 1})]
+                          code = foldr mod 1}),
+         ("**", Function { argc = 2,
+                          code = pow })]
 
-                          
+pow :: [Int] -> Int
+pow [a,b] = product $ replicate b a
+                    
 apply :: Function -> Stack -> Either Error Stack
 apply (Function argc code) stack = f code [] 0 stack
   where
@@ -54,9 +58,3 @@ main = do input <- getContents
     loop (x:xs) stack = case readMaybe x of
       Just n -> loop xs (push stack n)
       Nothing -> call x stack table >>= loop xs
-        
-
-  
-         
-
-  
