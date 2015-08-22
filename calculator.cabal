@@ -1,14 +1,14 @@
 name:                calculator
-version:             0.1.0.0
-synopsis:            Simple project template from stack
+version:             0.1.0.9
+synopsis:            A simple calculator
 description:         Please see README.md
-homepage:            http://github.com/githubuser/calculator#readme
+homepage:            http://github.com/juiko/calculator
 license:             BSD3
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2010 Author Here
-category:            Web
+author:              Hector Orellana
+maintainer:          hofm92@gmail.com
+copyright:           2015 Hector Orellana
+category:            CLI
 build-type:          Simple
 cabal-version:       >=1.10
 
