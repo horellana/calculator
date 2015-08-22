@@ -33,7 +33,10 @@ table = [("+", Function { name = "+",
                           code = product }),
          ("/", Function { name = "/",
                           argc = 2,
-                          code = foldr div 1 })]
+                          code = foldr div 1 }),
+         ("%", Function { name = "%",
+                          argc = 2,
+                          code = foldr mod 1})]
 
 apply :: Function -> Stack -> Either Error Stack
 apply (Function _ argc code) stack = f code [] 0 stack
