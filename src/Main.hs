@@ -15,7 +15,9 @@ data Stack = Stack [Int] deriving (Show)
 apply :: Function -> Stack -> Stack
 apply (Function _ args code) (Stack stack) = Stack $ (code $ take args stack) : (drop args stack)
 
-table :: [(String, Function)]
+type Table = [(String, Function)]
+
+table :: Table
 table = [("+", Function { name = "+",
                           args = 2,
                           code = sum }),
