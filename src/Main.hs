@@ -12,8 +12,11 @@ instance Show Function where
 
 data Stack = Stack [Int] deriving (Show)
 
-apply :: Function -> Stack -> Stack
-apply (Function _ argc code) (Stack stack) = Stack $ (code $ take argc stack) : (drop argc stack)
+push :: Stack -> Int -> Stack
+push (Stack s) n = Stack (n : s)
+
+pop :: Stack -> (Stack, Int)
+pop (Stack (x:xs)) = (Stack xs, x)
 
 type Table = [(String, Function)]
 
