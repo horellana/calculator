@@ -1,6 +1,7 @@
 module Main where
 
 import Text.Read
+import Data.Either
 
 data Function = Function { name :: String,
                            args :: Int,
@@ -28,10 +29,10 @@ table = [("+", Function { name = "+",
                           args = 2,
                           code = foldr div 1 })]
 
-eval :: String -> Stack -> Stack
-eval f stack = case lookup f table of
-  Just function -> apply function stack
-  Nothing -> error $ "Undefined function: " ++ f
+eval :: String -> Stack -> Table -> Either String Stack
+eval f s t = case lookup f t of
+  Just function -> Right $ apply function s
+  Nothing -> Left $ "Undefined function: " ++ f
 
 main :: IO ()
 main = undefined
