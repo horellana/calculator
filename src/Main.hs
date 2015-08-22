@@ -5,7 +5,7 @@ import Text.Read (readMaybe)
 data Function = Function { fArgc :: Int,
                            fCode :: [Double] -> Double }
                            
-data Stack = Stack [Double] deriving (Show)
+data Stack = Stack [Double]
 
 type Table = [(String, Function)]
 
