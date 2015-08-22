@@ -2,13 +2,9 @@ module Main where
 
 import Text.Read (readMaybe)
 
-data Function = Function { name :: String,
-                           argc :: Int,
+data Function = Function { argc :: Int,
                            code :: [Int] -> Int }
-
-instance Show Function where
-  show (Function name argc _) = "<Function " ++ name ++ " : " ++ show argc ++ ">"
-
+                           
 data Stack = Stack [Int] deriving (Show)
 
 type Table = [(String, Function)]
@@ -22,24 +18,20 @@ pop (Stack []) = Left "Stack underflow"
 pop (Stack (x:xs)) = Right (Stack xs, x)
 
 table :: Table
-table = [("+", Function { name = "+",
-                          argc = 2,
+table = [("+", Function { argc = 2,
                           code = sum }),
-         ("-", Function { name = "-",
-                          argc = 2,
+         ("-", Function { argc = 2,
                           code = foldr (-) 0}),
-         ("*", Function { name = "*",
-                          argc = 2,
+         ("*", Function { argc = 2,
                           code = product }),
-         ("/", Function { name = "/",
-                          argc = 2,
+         ("/", Function { argc = 2,
                           code = foldr div 1 }),
-         ("%", Function { name = "%",
-                          argc = 2,
+         ("%", Function { argc = 2,
                           code = foldr mod 1})]
 
+                          
 apply :: Function -> Stack -> Either Error Stack
-apply (Function _ argc code) stack = f code [] 0 stack
+apply (Function argc code) stack = f code [] 0 stack
   where
     f :: ([Int] -> Int) -> [Int] -> Int -> Stack -> Either Error Stack
     f fn args cont stack'
