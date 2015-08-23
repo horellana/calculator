@@ -1,15 +1,19 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main where
 
-import Text.Read (readMaybe)
+import Data.Text.Read (double)
+import qualified Data.Text as T (Text, splitOn, append)
+import qualified Data.Text.IO as TIO (getLine)
 
 data Function = Function { fArgc :: Int,
                            fCode :: [Double] -> Double }
                            
 data Stack = Stack [Double]
 
-type Table = [(String, Function)]
+type Table = [(T.Text, Function)]
 
-type Error = String
+type Error = T.Text
 
 push :: Stack -> Double -> Stack
 push (Stack s) n = Stack (n : s)
@@ -36,18 +40,22 @@ apply (Function argc code) = f code [] 0
       | otherwise = do (stack'', a) <- pop stack'
                        f fn (a : args) (cont + 1) stack''
                   
-call :: String -> Stack -> Table -> Either Error Stack
+call :: T.Text -> Stack -> Table -> Either Error Stack
 call f s t = case lookup f t of
   Just function -> apply function s
-  Nothing -> Left $ "Undefined function: " ++ f
+  Nothing -> Left $ T.append "Undefined function: "  f
 
 main :: IO ()
-main = do input <- getContents
-          case loop (words input) (Stack []) of
-            Right (Stack s) -> mapM_ print s
-            Left err -> putStrLn err
+main = loop $ Stack []
   where
-    loop [] stack = Right stack
-    loop (x:xs) stack = case readMaybe x of
-      Just n -> loop xs (push stack n)
-      Nothing -> call x stack table >>= loop xs
+    loop stack = do input <- TIO.getLine
+                    case evalLine (words' input) stack of
+                      Right (Stack s) -> do putStrLn "-----"
+                                            mapM_ print s
+                                            loop $ Stack s
+                      Left err -> print err
+    words' = T.splitOn " "
+    evalLine [] stack = Right stack
+    evalLine (x:xs) stack = case double x of
+      Right (n, _) -> evalLine xs (push stack n)
+      Left _ -> call x stack table >>= evalLine xs
