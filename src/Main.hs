@@ -2,14 +2,16 @@
 
 module Main where
 
-import Data.Text.Read (double)
-import qualified Data.Text as T (Text, splitOn, append)
-import qualified Data.Text.IO as TIO (getLine)
+import Control.Monad (forM_)
+import System.Environment (getArgs)
+import qualified Data.Text.Read as TR (double)
+import qualified Data.Text.IO as TIO (getLine, interact)
+import qualified Data.Text as T (Text, words, append, concat, pack)
 
 data Function = Function { fArgc :: Int,
                            fCode :: [Double] -> Double }
                            
-data Stack = Stack [Double]
+data Stack = Stack [Double] deriving (Show)
 
 type Table = [(T.Text, Function)]
 
@@ -45,17 +47,30 @@ call f s t = case lookup f t of
   Just function -> apply function s
   Nothing -> Left $ T.append "Undefined function: "  f
 
-main :: IO ()
-main = loop $ Stack []
+evalLine :: Stack -> T.Text -> Either Error Stack
+evalLine stack s = f (T.words s) stack
+  where
+    f [] stack' = Right stack'
+    f (x:xs) stack' = case TR.double x of Right (n, _) -> f xs (push stack' n)
+                                          Left _ -> call x stack' table >>= f xs
+
+interactive :: IO ()
+interactive = loop $ Stack []
   where
     loop stack = do input <- TIO.getLine
-                    case evalLine (words' input) stack of
-                      Right (Stack s) -> do putStrLn "-----"
-                                            mapM_ print s
-                                            loop $ Stack s
+                    case evalLine stack input of
+                      Right stack'@(Stack elements) -> do putStrLn "---"
+                                                          mapM_ print elements
+                                                          loop stack'
                       Left err -> print err
-    words' = T.splitOn " "
-    evalLine [] stack = Right stack
-    evalLine (x:xs) stack = case double x of
-      Right (n, _) -> evalLine xs (push stack n)
-      Left _ -> call x stack table >>= evalLine xs
+
+batch :: T.Text -> T.Text
+batch line = case evalLine (Stack []) line of
+      Right (Stack s) -> T.concat $ fmap (T.pack . show) s
+      Left err -> err
+      
+main :: IO ()
+main = do args <- getArgs
+          if not $ null args
+            then interactive
+            else TIO.interact batch
