@@ -30,7 +30,10 @@ table = [("+", Function 2 sum),
          ("*", Function 2 product),
          ("/", Function 2 $ foldr (/) 1),
          ("**", Function 2 pow),
-         ("sqrt", Function 1 $ sqrt . head)]
+         ("sqrt", Function 1 $ sqrt . head),
+         ("sin", Function 1 $ sin . head),
+         ("cos", Function 1 $ cos . head),
+         ("tan", Function 1 $ tan . head)]
   where
     pow [a,b] = product $ replicate (ceiling a) b
                     
@@ -60,7 +63,7 @@ interactive = loop $ Stack []
     loop stack = do input <- TIO.getLine
                     case evalLine stack input of
                       Right stack'@(Stack elements) -> do putStrLn "---"
-                                                          mapM_ print elements
+                                                          forM_ elements print
                                                           loop stack'
                       Left err -> print err
 
