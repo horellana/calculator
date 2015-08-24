@@ -69,8 +69,8 @@ interactive = loop $ Stack []
 
 batch :: T.Text -> T.Text
 batch line = case evalLine (Stack []) line of
-      Right (Stack s) -> T.concat $ fmap (T.pack . show) s
-      Left err -> err
+  Right (Stack s) -> T.concat $ fmap ((`T.append` "\n") . T.pack . show) s
+  Left err -> err
       
 main :: IO ()
 main = do args <- getArgs
