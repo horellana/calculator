@@ -70,10 +70,10 @@ interactive = loop $ Stack []
   where
     loop stack = do input <- TIO.getLine
                     case eval stack input of
-                      Right stack'@(Stack elements) -> do putStrLn "---"
-                                                          forM_ elements print
+                      Right stack'@(Stack elements) -> do forM_ elements print
+                                                          putStrLn "---"
                                                           loop stack'
-                      Left err -> print $ T.append err "\n"
+                      Left err -> print err >> loop stack
 
 batch :: T.Text -> T.Text
 batch line = case eval (Stack []) line of
