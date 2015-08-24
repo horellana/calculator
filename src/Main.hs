@@ -8,8 +8,7 @@ import qualified Data.Text.Read as TR (double)
 import qualified Data.Text.IO as TIO (getLine, interact)
 import qualified Data.Text as T (Text, words, append, concat, pack)
 
-data Function = Function { fArgc :: Int,
-                           fCode :: [Double] -> Double }
+data Function = Function Int ([Double] -> Double)
                            
 data Stack = Stack [Double] deriving (Show)
 
@@ -29,7 +28,10 @@ table = [("+", Function 2 sum),
          ("-", Function 2 $ foldr (-) 0),
          ("*", Function 2 product),
          ("/", Function 2 $ foldr (/) 1),
+         ("e", Function 0 $ const $ exp 1),
          ("**", Function 2 pow),
+         ("pi", Function 0 $ const pi),
+         ("log", Function 1 $ log . head),
          ("fib", Function 1 fib),
          ("fact", Function 1 fact),
          ("sqrt", Function 1 $ sqrt . head),
@@ -77,7 +79,7 @@ batch :: T.Text -> T.Text
 batch line = case eval (Stack []) line of
   Right (Stack s) -> T.concat $ fmap ((`T.append` "\n") . T.pack . show) s
   Left err -> T.append err "\n"
-      
+
 main :: IO ()
 main = do args <- getArgs
           if not $ null args
