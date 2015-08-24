@@ -16,7 +16,7 @@ Usage
 =====
 
 If you pass any command line argument, the program will start in interactive mode, where you can enter values and functions, each line will be evaluated
-and you will be able of seeing the values that currently are on the stack.
+and you will be able to see the values that currently are on the stack.
 
 example:
 ```
