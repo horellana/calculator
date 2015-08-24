@@ -56,8 +56,8 @@ call f s t = case lookup f t of
   Just function -> apply function s
   Nothing -> Left $ T.append "Undefined function: "  f
 
-evalLine :: Stack -> T.Text -> Either Error Stack
-evalLine stack s = f (T.words s) stack
+eval :: Stack -> T.Text -> Either Error Stack
+eval stack s = f (T.words s) stack
   where
     f [] stack' = Right stack'
     f (x:xs) stack' = case TR.double x of Right (n, _) -> f xs (push stack' n)
@@ -67,14 +67,14 @@ interactive :: IO ()
 interactive = loop $ Stack []
   where
     loop stack = do input <- TIO.getLine
-                    case evalLine stack input of
+                    case eval stack input of
                       Right stack'@(Stack elements) -> do putStrLn "---"
                                                           forM_ elements print
                                                           loop stack'
                       Left err -> print err
 
 batch :: T.Text -> T.Text
-batch line = case evalLine (Stack []) line of
+batch line = case eval (Stack []) line of
   Right (Stack s) -> T.concat $ fmap ((`T.append` "\n") . T.pack . show) s
   Left err -> err
       
