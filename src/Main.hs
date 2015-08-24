@@ -30,12 +30,18 @@ table = [("+", Function 2 sum),
          ("*", Function 2 product),
          ("/", Function 2 $ foldr (/) 1),
          ("**", Function 2 pow),
+         ("fib", Function 1 fib),
+         ("fact", Function 1 fact),
          ("sqrt", Function 1 $ sqrt . head),
          ("sin", Function 1 $ sin . head),
          ("cos", Function 1 $ cos . head),
          ("tan", Function 1 $ tan . head)]
   where
     pow [a,b] = product $ replicate (ceiling a) b
+    fact [n] = product [2..n]
+    fib [n] | n == 0 = 0
+            | n < 1 = 1
+            | otherwise = fib [n - 1] + fib [n - 2]
                     
 apply :: Function -> Stack -> Either Error Stack
 apply (Function argc code) = f code [] 0
