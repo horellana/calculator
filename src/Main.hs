@@ -37,7 +37,7 @@ table = [("+", Function 2 sum),
          ("cos", Function 1 $ cos . head),
          ("tan", Function 1 $ tan . head)]
   where
-    pow [a,b] = product $ replicate (ceiling a) b
+    pow [a,b] = product $ replicate (ceiling b) a
     fact [n] = product [2..n]
     fib [n] | n == 0 = 0
             | n < 1 = 1
@@ -71,12 +71,12 @@ interactive = loop $ Stack []
                       Right stack'@(Stack elements) -> do putStrLn "---"
                                                           forM_ elements print
                                                           loop stack'
-                      Left err -> print err
+                      Left err -> print $ T.append err "\n"
 
 batch :: T.Text -> T.Text
 batch line = case eval (Stack []) line of
   Right (Stack s) -> T.concat $ fmap ((`T.append` "\n") . T.pack . show) s
-  Left err -> err
+  Left err -> T.append err "\n"
       
 main :: IO ()
 main = do args <- getArgs
