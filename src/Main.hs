@@ -4,9 +4,9 @@ module Main where
 
 import Control.Monad (forM_)
 import System.Environment (getArgs)
-import qualified Data.Text.Read as TR (double)
-import qualified Data.Text.IO as TIO (getLine, interact)
-import qualified Data.Text as T (Text, words, append, concat, pack)
+import qualified Data.Text.Lazy.Read as TR (double)
+import qualified Data.Text.Lazy.IO as TIO (getLine, getContents)
+import qualified Data.Text.Lazy as T (Text, words, append, lines)
 
 data Function = Function Int ([Double] -> Double)
                            
