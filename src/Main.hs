@@ -76,13 +76,14 @@ interactive = loop $ Stack []
                                                           loop stack'
                       Left err -> print err >> loop stack
 
-batch :: T.Text -> T.Text
-batch line = case eval (Stack []) line of
-  Right (Stack s) -> T.concat $ fmap ((`T.append` "\n") . T.pack . show) s
-  Left err -> T.append err "\n"
+batch :: T.Text -> IO ()
+batch input = loop (Stack []) (T.lines input)
+  where
+    loop (Stack numbers) [] = forM_ numbers print
+    loop stack (x:xs) = either print (`loop` xs) (eval stack x)
 
 main :: IO ()
 main = do args <- getArgs
           if not $ null args
             then interactive
-            else TIO.interact batch
+            else TIO.getContents >>= batch
