@@ -31,6 +31,7 @@ table = [("+", Function 2 sum),
          ("e", Function 0 $ const $ exp 1),
          ("**", Function 2 pow),
          ("pi", Function 0 $ const pi),
+         ("exp", Function 2 tenPow),
          ("log", Function 1 $ log . head),
          ("fib", Function 1 fib),
          ("fact", Function 1 fact),
@@ -41,6 +42,7 @@ table = [("+", Function 2 sum),
          ("tan", Function 1 $ tan . head)]
   where
     pow [a,b] = product $ replicate (ceiling b) a
+    tenPow [a,b] = a * pow [10, b]
     fact [n] = product [2..n]
     fib [n] | n == 0 = 0
             | n < 1 = 1
