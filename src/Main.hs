@@ -9,7 +9,7 @@ import qualified Data.Text.Lazy.IO as TIO (getLine, getContents)
 import qualified Data.Text.Lazy as T (Text, words, append, lines)
 
 data Function = Function Int ([Double] -> Double)
-                           
+
 data Stack = Stack [Double] deriving (Show)
 
 type Table = [(T.Text, Function)]
@@ -47,15 +47,15 @@ table = [("+", Function 2 sum),
     fib [n] | n == 0 = 0
             | n < 1 = 1
             | otherwise = fib [n - 1] + fib [n - 2]
-                    
+
 apply :: Function -> Stack -> Either Error Stack
 apply (Function argc code) = f code [] 0
   where
     f fn args cont stack'
-      | cont == argc = Right $ push stack' (fn args) 
+      | cont == argc = Right $ push stack' (fn args)
       | otherwise = do (stack'', a) <- pop stack'
                        f fn (a : args) (cont + 1) stack''
-                  
+
 call :: T.Text -> Stack -> Table -> Either Error Stack
 call f s t = case lookup f t of
   Just function -> apply function s
@@ -78,14 +78,14 @@ interactive = loop $ Stack []
                                                           loop stack'
                       Left err -> print err >> loop stack
 
-batch :: T.Text -> IO ()
-batch input = loop (Stack []) (T.lines input)
+batch :: IO ()
+batch = TIO.getContents >>= loop (Stack []) . T.lines
   where
     loop (Stack numbers) [] = forM_ numbers print
-    loop stack (x:xs) = either print (`loop` xs) (eval stack x)
+    loop stack (x:xs) = either print (`loop` xs) $ eval stack x
 
 main :: IO ()
 main = do args <- getArgs
           if not $ null args
             then interactive
-            else TIO.getContents >>= batch
+            else batch
